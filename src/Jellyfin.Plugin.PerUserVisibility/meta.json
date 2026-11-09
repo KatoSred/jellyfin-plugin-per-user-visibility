@@ -1,0 +1,15 @@
+{
+  "category": "General",
+  "changelog": "Whole-library grants now also open the library entry, and revoking one closes it again unless single items inside are still granted. Fixes a revoked whole-library grant that left the library visible to the user.",
+  "description": "Restrict what each user can see inside a library. The administrator picks the visible series per user; hidden items are fully invisible (HTTP 404), not merely unplayable, and the selection survives metadata refreshes.",
+  "guid": "8f4a1c72-3d95-4f60-9b21-7c5ade0f6b13",
+  "name": "Per-User Visibility",
+  "overview": "Per-user, per-library visibility enforced by Jellyfin's own tag filters.",
+  "owner": "KatoSred",
+  "targetAbi": "12.4.0.0",
+  "timestamp": "2026-11-09T11:30:00.0000000Z",
+  "version": "1.0.1.0",
+  "status": "Active",
+  "autoUpdate": true,
+  "assemblies": []
+}

@@ -1,0 +1,658 @@
+<div id="PerUserVisibilityConfigPage" data-role="page" class="page type-interior pluginConfigurationPage">
+    <style>
+        #PerUserVisibilityConfigPage .puv-card { border: 1px solid rgba(128,128,128,.35); border-radius: 6px; padding: 12px 14px; margin: 10px 0; }
+        #PerUserVisibilityConfigPage .puv-muted { opacity: .72; font-size: .9em; }
+        #PerUserVisibilityConfigPage .puv-userbar { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        #PerUserVisibilityConfigPage .puv-userbar select { min-width: 180px; }
+        #PerUserVisibilityConfigPage .puv-badge { font-size: .85em; padding: 2px 9px; border-radius: 10px; background: rgba(128,128,128,.15); white-space: nowrap; }
+        #PerUserVisibilityConfigPage .puv-badge.on { background: rgba(128,128,128,.3); }
+        #PerUserVisibilityConfigPage .puv-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+        #PerUserVisibilityConfigPage .puv-tabs { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+        #PerUserVisibilityConfigPage .puv-tab { font-size: .85em; padding: 3px 12px; border-radius: 999px; border: 1px solid rgba(128,128,128,.35); background: transparent; color: inherit; cursor: pointer; }
+        #PerUserVisibilityConfigPage .puv-tab.on { background: rgba(128,128,128,.22); border-color: rgba(128,128,128,.55); font-weight: 500; }
+        #PerUserVisibilityConfigPage .puv-whole { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: .85em; }
+        #PerUserVisibilityConfigPage .puv-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 8px 0 2px; font-size: .9em; }
+        #PerUserVisibilityConfigPage .puv-toolbar button { font-size: .85em; padding: 2px 9px; }
+        #PerUserVisibilityConfigPage .puv-list { max-height: 340px; overflow: auto; }
+        #PerUserVisibilityConfigPage .puv-item { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 4px; font-size: .95em; cursor: pointer; }
+        #PerUserVisibilityConfigPage .puv-item:hover { background: rgba(128,128,128,.1); }
+        #PerUserVisibilityConfigPage .puv-item.disabled { opacity: .45; cursor: default; }
+        #PerUserVisibilityConfigPage .puv-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #PerUserVisibilityConfigPage .puv-year { font-size: .85em; opacity: .6; }
+        #PerUserVisibilityConfigPage .puv-tag { font-size: .75em; padding: 0 5px; border: 1px solid rgba(128,128,128,.35); border-radius: 4px; opacity: .7; }
+        #PerUserVisibilityConfigPage .puv-sum-head { display: flex; justify-content: space-between; font-size: .82em; opacity: .62; margin: 9px 0 2px; }
+        #PerUserVisibilityConfigPage .puv-rm { border: none; background: none; color: inherit; cursor: pointer; opacity: .5; font-size: 1.15em; line-height: 1; padding: 0 3px; }
+        #PerUserVisibilityConfigPage .puv-rm:hover { opacity: 1; }
+        #PerUserVisibilityConfigPage .puv-foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border: 1px solid rgba(128,128,128,.35); border-radius: 6px; background: rgba(128,128,128,.08); margin-top: 10px; }
+        #PerUserVisibilityConfigPage .puv-spacer { margin-left: auto; }
+        #PerUserVisibilityConfigPage .puv-dirty { font-size: .9em; opacity: .65; }
+        #PerUserVisibilityConfigPage .puv-dirty.on { opacity: 1; font-weight: 500; }
+        #PerUserVisibilityConfigPage .puv-status { margin-top: 10px; font-size: .9em; min-height: 1.2em; }
+        #PerUserVisibilityConfigPage .puv-status.err { color: #d9534f; }
+        #PerUserVisibilityConfigPage .puv-maint { margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(128,128,128,.25); display: flex; gap: 8px; flex-wrap: wrap; }
+        #PerUserVisibilityConfigPage .puv-maint button { font-size: .85em; }
+        #PerUserVisibilityConfigPage mark { background: rgba(255,200,0,.35); color: inherit; border-radius: 2px; }
+        @media (max-width: 820px) {
+            #PerUserVisibilityConfigPage .puv-grid { grid-template-columns: 1fr; }
+            #PerUserVisibilityConfigPage .puv-whole { margin-left: 0; width: 100%; }
+        }
+    </style>
+
+    <div data-role="content">
+        <div class="content-primary">
+            <h2 style="margin-bottom:4px;">Per-User Visibility</h2>
+            <p class="puv-muted">
+                选择普通用户，勾选允许他看到的剧集。未勾选的剧集对该用户完全不可见：不会出现在首页、列表和搜索里，
+                直接访问条目地址也会被拒绝。管理员账户不受此限制。
+            </p>
+
+            <div class="puv-card puv-userbar">
+                <select id="lsUser"></select>
+                <label style="display:flex;align-items:center;gap:6px;">
+                    <input type="checkbox" id="lsEnabled" />
+                    <span>启用限制</span>
+                </label>
+                <span id="lsScopeState" class="puv-badge">未配置</span>
+            </div>
+
+            <div class="puv-grid">
+                <div class="puv-card">
+                    <div class="puv-tabs" id="lsTabs"></div>
+                    <input type="text" id="lsQuery" placeholder="输入关键词过滤当前媒体库" style="width:100%;box-sizing:border-box;" />
+                    <div class="puv-toolbar">
+                        <span id="lsStat">—</span>
+                        <span style="display:flex;gap:6px;">
+                            <button type="button" id="lsAll">全选本库</button>
+                            <button type="button" id="lsNone">清空本库</button>
+                        </span>
+                    </div>
+                    <div class="puv-list" id="lsResults"></div>
+                </div>
+
+                <div class="puv-card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+                        <span class="puv-muted">已授权 <strong id="lsCount">0</strong> 部</span>
+                        <button type="button" id="lsClearAll" style="font-size:.85em;padding:2px 9px;">清空全部</button>
+                    </div>
+                    <div class="puv-list" id="lsSummary" style="max-height:300px;margin-top:6px;"></div>
+                </div>
+            </div>
+
+            <div class="puv-foot">
+                <span id="lsDirty" class="puv-dirty">所有更改已保存</span>
+                <span class="puv-spacer" style="display:flex;gap:8px;">
+                    <button type="button" id="lsReset">放弃更改</button>
+                    <button type="button" id="lsSave" class="raised button-submit">保存并应用</button>
+                </span>
+            </div>
+
+            <div class="puv-maint">
+                <button type="button" id="lsApplyAll">按已保存配置重新应用全部用户</button>
+                <button type="button" id="lsRemove">清除此用户的限制</button>
+            </div>
+            <div class="puv-status" id="lsStatus"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function () {
+            'use strict';
+
+            var API = 'PerUserVisibility/';
+            var LIMIT = 300;
+
+            var state = {
+                userId: null,
+                enabled: false,
+                whole: [],
+                items: [],
+                names: {},
+                users: [],
+                libraries: [],
+                cache: {},
+                truncated: {},
+                lib: null,
+                q: '',
+                saved: '',
+                searchSeq: 0
+            };
+
+            function el(id) { return document.getElementById(id); }
+
+            function authToken() {
+                try { return ApiClient.accessToken(); } catch (e) { return ''; }
+            }
+
+            function apiUrl(path) {
+                try { return ApiClient.getUrl(path); } catch (e) { return '/' + path; }
+            }
+
+            function apiGet(path) {
+                return fetch(apiUrl(path), {
+                    headers: { 'Authorization': 'MediaBrowser Token="' + authToken() + '"' }
+                }).then(function (r) {
+                    if (!r.ok) { throw new Error('HTTP ' + r.status); }
+                    return r.json();
+                });
+            }
+
+            function apiPost(path, body) {
+                return fetch(apiUrl(path), {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'MediaBrowser Token="' + authToken() + '"',
+                        'Content-Type': 'application/json'
+                    },
+                    body: body ? JSON.stringify(body) : null
+                }).then(function (r) {
+                    if (!r.ok) {
+                        return r.text().then(function (t) { throw new Error(t || ('HTTP ' + r.status)); });
+                    }
+                    var ct = r.headers.get('content-type') || '';
+                    return ct.indexOf('json') >= 0 ? r.json() : {};
+                });
+            }
+
+            function status(msg, isError) {
+                var s = el('lsStatus');
+                s.textContent = msg || '';
+                s.className = 'puv-status' + (isError ? ' err' : '');
+            }
+
+            function norm(list) {
+                return (list || []).map(function (x) { return String(x).toLowerCase(); });
+            }
+
+            function remember(item) {
+                if (!item || !item.Id) { return; }
+                state.names[String(item.Id).toLowerCase()] = {
+                    n: item.Name || '',
+                    y: item.Year || null,
+                    lib: item.LibraryId ? String(item.LibraryId).toLowerCase() : null
+                };
+            }
+
+            function displayName(id) {
+                var m = state.names[id];
+                return m && m.n ? m.n : id;
+            }
+
+            function findUser(id) {
+                for (var i = 0; i < state.users.length; i++) {
+                    if (String(state.users[i].Id) === String(id)) { return state.users[i]; }
+                }
+                return null;
+            }
+
+            function signature() {
+                return JSON.stringify({
+                    e: !!state.enabled,
+                    w: state.whole.slice().sort(),
+                    i: state.items.slice().sort()
+                });
+            }
+
+            function snapshot() { state.saved = signature(); }
+
+            function isDirty() { return signature() !== state.saved; }
+
+            function renderUserBar() {
+                var user = findUser(state.userId);
+                var badge = el('lsScopeState');
+                if (!user) {
+                    badge.textContent = '未选择';
+                    badge.className = 'puv-badge';
+                    return;
+                }
+                var hasScope = !!user.Scope;
+                if (!hasScope) {
+                    badge.textContent = '未配置 · 可见全部';
+                    badge.className = 'puv-badge';
+                } else if (state.enabled) {
+                    badge.textContent = '已启用 · ' + state.items.length + ' 部';
+                    badge.className = 'puv-badge on';
+                } else {
+                    badge.textContent = '已停用 · 可见全部';
+                    badge.className = 'puv-badge';
+                }
+                el('lsEnabled').checked = !!state.enabled;
+            }
+
+            function renderTabs() {
+                var host = el('lsTabs');
+                host.innerHTML = '';
+                state.libraries.forEach(function (lib) {
+                    var id = String(lib.Id).toLowerCase();
+                    var b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'puv-tab' + (state.lib === id ? ' on' : '');
+                    b.textContent = lib.Name;
+                    b.addEventListener('click', function () { selectLibrary(id); });
+                    host.appendChild(b);
+                });
+
+                var whole = document.createElement('label');
+                whole.className = 'puv-whole';
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.checked = state.lib ? state.whole.indexOf(state.lib) >= 0 : false;
+                cb.disabled = !state.lib;
+                cb.addEventListener('change', function () { toggleWhole(cb.checked); });
+                whole.appendChild(cb);
+                whole.appendChild(document.createTextNode('本库整库可见'));
+                host.appendChild(whole);
+            }
+
+            function paintList(rows) {
+                var host = el('lsResults');
+                host.innerHTML = '';
+                if (!rows.length) {
+                    host.innerHTML = '<div class="puv-muted" style="padding:14px 4px;">没有匹配的剧集。</div>';
+                    return;
+                }
+                var q = state.q.trim().toLowerCase();
+                rows.forEach(function (it) {
+                    var id = String(it.Id).toLowerCase();
+                    var on = state.items.indexOf(id) >= 0;
+                    var label = document.createElement('label');
+                    label.className = 'puv-item';
+
+                    var cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.checked = on;
+                    cb.addEventListener('change', function () {
+                        if (cb.checked) { addItem(id); } else { removeItem(id); }
+                        renderTabs();
+                        renderSummary();
+                        renderFoot();
+                    });
+
+                    var title = document.createElement('span');
+                    title.className = 'puv-title';
+                    if (q) {
+                        var name = it.Name || '';
+                        var at = name.toLowerCase().indexOf(q);
+                        if (at >= 0) {
+                            title.appendChild(document.createTextNode(name.slice(0, at)));
+                            var mark = document.createElement('mark');
+                            mark.textContent = name.slice(at, at + q.length);
+                            title.appendChild(mark);
+                            title.appendChild(document.createTextNode(name.slice(at + q.length)));
+                        } else {
+                            title.textContent = name;
+                        }
+                    } else {
+                        title.textContent = it.Name || '';
+                    }
+
+                    label.appendChild(cb);
+                    label.appendChild(title);
+                    if (it.Year) {
+                        var y = document.createElement('span');
+                        y.className = 'puv-year';
+                        y.textContent = it.Year;
+                        label.appendChild(y);
+                    }
+                    if (it.Type) {
+                        var t = document.createElement('span');
+                        t.className = 'puv-tag';
+                        t.textContent = it.Type;
+                        label.appendChild(t);
+                    }
+                    host.appendChild(label);
+                });
+            }
+
+            function renderResults() {
+                var host = el('lsResults');
+                el('lsQuery').disabled = !state.lib;
+                if (!state.lib) {
+                    host.innerHTML = '<div class="puv-muted" style="padding:14px 4px;">请先选择媒体库。</div>';
+                    el('lsStat').textContent = '—';
+                    return;
+                }
+
+                var libIsWhole = state.whole.indexOf(state.lib) >= 0;
+                el('lsAll').disabled = libIsWhole;
+                el('lsNone').disabled = libIsWhole;
+                el('lsQuery').disabled = libIsWhole;
+
+                if (libIsWhole) {
+                    host.innerHTML = '<div class="puv-muted" style="padding:14px 4px;">该库已设为整库可见，无需逐条授权。</div>';
+                    el('lsStat').textContent = '整库可见';
+                    return;
+                }
+
+                var list = state.cache[state.lib];
+                if (!list) {
+                    host.innerHTML = '<div class="puv-muted" style="padding:14px 4px;">加载中…</div>';
+                    el('lsStat').textContent = '加载中…';
+                    return;
+                }
+
+                var q = state.q.trim();
+                if (q && state.truncated[state.lib]) {
+                    remoteSearch(q);
+                    return;
+                }
+
+                var rows = q
+                    ? list.filter(function (x) { return (x.Name || '').toLowerCase().indexOf(q.toLowerCase()) >= 0; })
+                    : list;
+
+                el('lsStat').textContent = q
+                    ? '匹配 ' + rows.length + ' 部'
+                    : '共 ' + list.length + ' 部' + (state.truncated[state.lib] ? '（仅加载前 ' + LIMIT + ' 部）' : '');
+
+                paintList(rows);
+            }
+
+            function remoteSearch(q) {
+                var seq = ++state.searchSeq;
+                el('lsStat').textContent = '搜索中…';
+                apiGet(API + 'Search?libraryId=' + encodeURIComponent(state.lib) + '&query=' + encodeURIComponent(q))
+                    .then(function (items) {
+                        if (seq !== state.searchSeq) { return; }
+                        items.forEach(remember);
+                        el('lsStat').textContent = '匹配 ' + items.length + ' 部';
+                        paintList(items);
+                    })
+                    .catch(function (e) {
+                        if (seq !== state.searchSeq) { return; }
+                        status('搜索失败：' + e.message, true);
+                    });
+            }
+
+            function renderSummary() {
+                var host = el('lsSummary');
+                host.innerHTML = '';
+                el('lsCount').textContent = String(state.items.length);
+
+                if (!state.items.length) {
+                    host.innerHTML = '<div class="puv-muted" style="padding:10px 4px;">尚未授权任何剧集。' +
+                        (state.enabled ? '该用户当前看不到任何内容。' : '') + '</div>';
+                    return;
+                }
+
+                var groups = [];
+                state.items.forEach(function (id) {
+                    var meta = state.names[id];
+                    var libId = meta && meta.lib ? meta.lib : '';
+                    var group = null;
+                    for (var i = 0; i < groups.length; i++) {
+                        if (groups[i].id === libId) { group = groups[i]; }
+                    }
+                    if (!group) {
+                        group = { id: libId, name: '', ids: [] };
+                        state.libraries.forEach(function (lib) {
+                            if (String(lib.Id).toLowerCase() === libId) { group.name = lib.Name; }
+                        });
+                        if (!group.name) { group.name = '其他'; }
+                        groups.push(group);
+                    }
+                    group.ids.push(id);
+                });
+
+                groups.forEach(function (group) {
+                    var head = document.createElement('div');
+                    head.className = 'puv-sum-head';
+                    head.innerHTML = '<span></span><span></span>';
+                    head.firstChild.textContent = group.name;
+                    head.lastChild.textContent = String(group.ids.length);
+                    host.appendChild(head);
+
+                    group.ids.forEach(function (id) {
+                        var row = document.createElement('div');
+                        row.className = 'puv-item';
+                        row.style.cursor = 'default';
+                        var s = document.createElement('span');
+                        s.className = 'puv-title';
+                        s.textContent = displayName(id);
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'puv-rm';
+                        btn.textContent = '\u00d7';
+                        btn.title = '移除授权';
+                        btn.addEventListener('click', function () {
+                            removeItem(id);
+                            renderResults();
+                            renderSummary();
+                            renderTabs();
+                            renderFoot();
+                        });
+                        row.appendChild(s);
+                        row.appendChild(btn);
+                        host.appendChild(row);
+                    });
+                });
+            }
+
+            function renderFoot() {
+                var d = isDirty();
+                var elDirty = el('lsDirty');
+                elDirty.textContent = d ? '有未保存的更改' : '所有更改已保存';
+                elDirty.className = 'puv-dirty' + (d ? ' on' : '');
+                el('lsSave').disabled = !d;
+            }
+
+            function renderAll() {
+                renderUserBar();
+                renderTabs();
+                renderResults();
+                renderSummary();
+                renderFoot();
+            }
+
+            function addItem(id) {
+                if (state.items.indexOf(id) < 0) { state.items.push(id); }
+            }
+
+            function removeItem(id) {
+                state.items = state.items.filter(function (x) { return x !== id; });
+            }
+
+            function selectLibrary(id) {
+                state.lib = id;
+                state.q = '';
+                el('lsQuery').value = '';
+                renderTabs();
+                if (state.cache[id]) {
+                    renderResults();
+                    return;
+                }
+                renderResults();
+                apiGet(API + 'Search?libraryId=' + encodeURIComponent(id) + '&query=')
+                    .then(function (items) {
+                        items.forEach(function (it) {
+                            remember(it);
+                            var meta = state.names[String(it.Id).toLowerCase()];
+                            if (meta) { meta.lib = id; }
+                        });
+                        state.cache[id] = items;
+                        state.truncated[id] = items.length >= LIMIT;
+                        if (state.lib === id) { renderResults(); }
+                    })
+                    .catch(function (e) { status('加载媒体库失败：' + e.message, true); });
+            }
+
+            function toggleWhole(on) {
+                if (!state.lib) { return; }
+                if (on) {
+                    if (state.whole.indexOf(state.lib) < 0) { state.whole.push(state.lib); }
+                    var inLib = state.items.filter(function (id) {
+                        var meta = state.names[id];
+                        return meta && meta.lib === state.lib;
+                    });
+                    state.items = state.items.filter(function (id) { return inLib.indexOf(id) < 0; });
+                } else {
+                    state.whole = state.whole.filter(function (x) { return x !== state.lib; });
+                }
+                renderTabs();
+                renderResults();
+                renderSummary();
+                renderFoot();
+            }
+
+            function applyUser(id) {
+                var user = findUser(id);
+                state.userId = id;
+                state.items = user && user.Scope ? norm(user.Scope.ItemIds) : [];
+                state.whole = user && user.Scope ? norm(user.Scope.WholeLibraryIds) : [];
+                state.enabled = user && user.Scope ? user.Scope.Enabled !== false : false;
+                state.names = {};
+                if (user && user.Scope && user.Scope.Items) {
+                    user.Scope.Items.forEach(remember);
+                }
+                state.lib = state.libraries.length ? String(state.libraries[0].Id).toLowerCase() : null;
+                state.q = '';
+                el('lsQuery').value = '';
+                snapshot();
+                renderAll();
+                if (state.lib) { selectLibrary(state.lib); }
+            }
+
+            function renderUserSelect(keepId) {
+                var sel = el('lsUser');
+                sel.innerHTML = '';
+                state.users.forEach(function (u) {
+                    var o = document.createElement('option');
+                    o.value = u.Id;
+                    o.textContent = u.Name;
+                    sel.appendChild(o);
+                });
+                var target = keepId || state.userId;
+                if (target && findUser(target)) {
+                    sel.value = String(target);
+                } else if (state.users.length) {
+                    sel.value = state.users[0].Id;
+                }
+                sel.onchange = function () {
+                    if (isDirty() && !window.confirm('当前修改尚未保存，切换用户会丢失这些修改。继续？')) {
+                        sel.value = state.userId;
+                        return;
+                    }
+                    applyUser(sel.value);
+                };
+                applyUser(sel.value);
+            }
+
+            function reloadUsers(keepUserId) {
+                return apiGet(API + 'Users').then(function (users) {
+                    state.users = users.filter(function (u) { return !u.IsAdministrator; });
+                    renderUserSelect(keepUserId);
+                });
+            }
+
+            function doSave() {
+                if (!state.userId) { status('请选择用户。', true); return; }
+                status('保存中…');
+                el('lsSave').disabled = true;
+                apiPost(API + 'Save', {
+                    UserId: state.userId,
+                    Enabled: !!state.enabled,
+                    WholeLibraryIds: state.whole,
+                    ItemIds: state.items
+                }).then(function (r) {
+                    status('已应用，共 ' + (r.granted || 0) + ' 个可见条目。');
+                    return reloadUsers(state.userId);
+                }).catch(function (e) {
+                    status('保存失败：' + e.message, true);
+                }).then(function () {
+                    renderFoot();
+                });
+            }
+
+            function doReset() {
+                applyUser(state.userId);
+                status('已放弃未保存的更改。');
+            }
+
+            function doApplyAll() {
+                status('应用中…');
+                apiPost(API + 'ApplyAll').then(function (r) {
+                    status(r && r.changed ? '已按当前配置重新应用。' : '配置未变化，无需应用。');
+                    return reloadUsers(state.userId);
+                }).catch(function (e) {
+                    status('失败：' + e.message, true);
+                });
+            }
+
+            function doRemove() {
+                if (!state.userId) { return; }
+                if (!window.confirm('清除后该用户将恢复为可以看到全部内容，确定？')) { return; }
+                status('处理中…');
+                apiPost(API + 'Remove?userId=' + encodeURIComponent(state.userId))
+                    .then(function () {
+                        status('已清除该用户的限制。');
+                        return reloadUsers(state.userId);
+                    })
+                    .catch(function (e) { status('失败：' + e.message, true); });
+            }
+
+            el('lsEnabled').addEventListener('change', function () {
+                state.enabled = this.checked;
+                renderUserBar();
+                renderFoot();
+            });
+
+            el('lsQuery').addEventListener('input', function () {
+                state.q = this.value;
+                window.clearTimeout(state._t);
+                var self = this;
+                state._t = window.setTimeout(function () {
+                    if (state.lib) { renderResults(); }
+                }, 300);
+            });
+
+            el('lsAll').addEventListener('click', function () {
+                if (!state.lib || state.whole.indexOf(state.lib) >= 0) { return; }
+                var list = state.cache[state.lib] || [];
+                var q = state.q.trim().toLowerCase();
+                (q ? list.filter(function (x) { return (x.Name || '').toLowerCase().indexOf(q) >= 0; }) : list)
+                    .forEach(function (x) { addItem(String(x.Id).toLowerCase()); });
+                renderResults();
+                renderSummary();
+                renderFoot();
+            });
+
+            el('lsNone').addEventListener('click', function () {
+                if (!state.lib) { return; }
+                var list = state.cache[state.lib] || [];
+                var q = state.q.trim().toLowerCase();
+                var victims = (q ? list.filter(function (x) { return (x.Name || '').toLowerCase().indexOf(q) >= 0; }) : list)
+                    .map(function (x) { return String(x.Id).toLowerCase(); });
+                state.items = state.items.filter(function (id) { return victims.indexOf(id) < 0; });
+                renderResults();
+                renderSummary();
+                renderFoot();
+            });
+
+            el('lsClearAll').addEventListener('click', function () {
+                if (!state.items.length) { return; }
+                if (!window.confirm('清空后该用户将看不到任何内容（若启用限制）。确定？')) { return; }
+                state.items = [];
+                renderResults();
+                renderSummary();
+                renderFoot();
+            });
+
+            el('lsSave').addEventListener('click', doSave);
+            el('lsReset').addEventListener('click', doReset);
+            el('lsApplyAll').addEventListener('click', doApplyAll);
+            el('lsRemove').addEventListener('click', doRemove);
+
+            Promise.all([apiGet(API + 'Users'), apiGet(API + 'Libraries')])
+                .then(function (res) {
+                    state.users = res[0].filter(function (u) { return !u.IsAdministrator; });
+                    state.libraries = res[1];
+                    if (!state.users.length) {
+                        status('没有可配置的普通用户。', true);
+                        return;
+                    }
+                    renderUserSelect(state.users[0].Id);
+                    status('');
+                })
+                .catch(function (e) { status('加载失败：' + e.message, true); });
+        })();
+    </script>
+</div>
