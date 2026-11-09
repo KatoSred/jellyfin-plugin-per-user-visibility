@@ -14,6 +14,7 @@ Jellyfin grants access per library. This plugin grants it per user, per library:
 - [Installation](#installation)
 - [Usage](#usage)
 - [Limitations](#limitations)
+- [How this was built](#how-this-was-built)
 - [Build from source](#build-from-source)
 
 ## Quick start
@@ -112,6 +113,12 @@ The selection is a whitelist: anything unticked is invisible, and that holds for
 - **Libraries granted item by item stay under *Library access*.** The plugin grants items, not library entries, so if a user is given a few series and sees none of them, check that the library is in their *Library access* list. Whole-library grants look after this themselves — the entry is added on and removed again when the switch goes off.
 - **Tags become read-only for granted items.** The tag field is locked, so manual tag edits on those items are ignored until the grant is removed.
 - **One tag per user per item.** Scopes add up across libraries; they are not per-library namespaces. An item granted to a user counts as granted everywhere that user can see it.
+
+## How this was built
+
+This plugin was written by an AI coding assistant under the maintainer's direction. The design, the tag-based approach and the API surface were the maintainer's calls; the implementation and this documentation were drafted with AI assistance and reviewed before release.
+
+Everything described above was verified on a live Jellyfin 12.4.0 server: installing from the repository URL, granting and revoking scopes, confirming that hidden items return `404`, refreshing metadata, and uninstalling. Beyond the MIT licence there is no warranty — if it misbehaves on your setup, open an issue with the server version and the relevant log line.
 
 ## Build from source
 
