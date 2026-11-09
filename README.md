@@ -118,7 +118,7 @@ The selection is a whitelist: anything unticked is invisible, and that holds for
 
 This plugin was written by an AI coding assistant under the maintainer's direction. The design, the tag-based approach and the API surface were the maintainer's calls; the implementation and this documentation were drafted with AI assistance and reviewed before release.
 
-Everything described above was verified on a live Jellyfin 12.4.0 server: installing from the repository URL, granting and revoking scopes, confirming that hidden items return `404`, refreshing metadata, and uninstalling. Beyond the MIT licence there is no warranty — if it misbehaves on your setup, open an issue with the server version and the relevant log line.
+Everything described above was verified on a live Jellyfin 12.4.0 server: installing from the repository URL, granting and revoking scopes, confirming that hidden items return `404`, refreshing metadata, and uninstalling. Beyond the MIT licence there is no warranty.
 
 ## Build from source
 
