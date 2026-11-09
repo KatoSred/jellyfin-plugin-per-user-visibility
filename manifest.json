@@ -11,7 +11,7 @@
         "version": "1.0.1.0",
         "changelog": "Whole-library grants now also open the library entry, and revoking one closes it again unless single items inside are still granted. Fixes a revoked whole-library grant that left the library visible to the user.",
         "targetAbi": "12.4.0.0",
-        "sourceUrl": "https://raw.githubusercontent.com/KatoSred/Per-User-Visibility/main/dist/PerUserVisibility_1.0.1.0.zip",
+        "sourceUrl": "https://raw.githubusercontent.com/KatoSred/jellyfin-plugin-per-user-visibility/main/dist/PerUserVisibility_1.0.1.0.zip",
         "checksum": "f40ab3188f435eebfb2d7d475fb99d3b",
         "timestamp": "2026-11-09T11:30:00.0000000Z"
       },
@@ -19,7 +19,7 @@
         "version": "1.0.0.0",
         "changelog": "Initial release. Per-library visibility scopes for individual users, enforced by Jellyfin's own tag filters. Includes a sidebar page with per-library item selection and whole-library grants, and locks the tag field so metadata refreshes do not drop the restriction.",
         "targetAbi": "12.4.0.0",
-        "sourceUrl": "https://raw.githubusercontent.com/KatoSred/Per-User-Visibility/main/dist/PerUserVisibility_1.0.0.0.zip",
+        "sourceUrl": "https://raw.githubusercontent.com/KatoSred/jellyfin-plugin-per-user-visibility/main/dist/PerUserVisibility_1.0.0.0.zip",
         "checksum": "6f708cd10ac57bd363b1745b29291b4f",
         "timestamp": "2026-11-09T10:25:00.0000000Z"
       }

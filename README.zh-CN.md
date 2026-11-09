@@ -22,7 +22,7 @@ Jellyfin 只能按媒体库授权。这个插件按用户、按媒体库勾选�
 1. 在**控制台 → 插件 → 仓库**里添加这个地址：
 
    ```text
-   https://raw.githubusercontent.com/KatoSred/Per-User-Visibility/main/manifest.json
+   https://raw.githubusercontent.com/KatoSred/jellyfin-plugin-per-user-visibility/main/manifest.json
    ```
 
 2. 在**目录**标签页安装 **Per-User Visibility**。
@@ -59,7 +59,7 @@ Jellyfin 只能按媒体库授权。这个插件按用户、按媒体库勾选�
 2. 点**添加**，名称随意（例如 `Per-User Visibility`），地址填入：
 
    ```text
-   https://raw.githubusercontent.com/KatoSred/Per-User-Visibility/main/manifest.json
+   https://raw.githubusercontent.com/KatoSred/jellyfin-plugin-per-user-visibility/main/manifest.json
    ```
 
 3. 保存后切到**目录**标签页。
@@ -125,8 +125,8 @@ Jellyfin 只能按媒体库授权。这个插件按用户、按媒体库勾选�
 需要 .NET SDK 10。
 
 ```bash
-git clone https://github.com/KatoSred/Per-User-Visibility.git
-cd Per-User-Visibility/src/Jellyfin.Plugin.PerUserVisibility
+git clone https://github.com/KatoSred/jellyfin-plugin-per-user-visibility.git
+cd jellyfin-plugin-per-user-visibility/src/Jellyfin.Plugin.PerUserVisibility
 dotnet publish -c Release -o ../../build
 cd ../..
 python3 tools/package.py

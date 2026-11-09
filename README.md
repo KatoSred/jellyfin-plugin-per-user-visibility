@@ -22,7 +22,7 @@ Jellyfin grants access per library. This plugin grants it per user, per library:
 1. Add this URL under **Dashboard → Plugins → Repositories**:
 
    ```text
-   https://raw.githubusercontent.com/KatoSred/Per-User-Visibility/main/manifest.json
+   https://raw.githubusercontent.com/KatoSred/jellyfin-plugin-per-user-visibility/main/manifest.json
    ```
 
 2. Install **Per-User Visibility** from the **Catalog** tab.
@@ -59,7 +59,7 @@ It does not run on 10.9 or 11 — the plugin is built against `12.4.0.0`, and th
 2. Press **Add**, give it a name such as `Per-User Visibility`, and paste this URL:
 
    ```text
-   https://raw.githubusercontent.com/KatoSred/Per-User-Visibility/main/manifest.json
+   https://raw.githubusercontent.com/KatoSred/jellyfin-plugin-per-user-visibility/main/manifest.json
    ```
 
 3. Save, then switch to the **Catalog** tab.
@@ -125,8 +125,8 @@ Everything described above was verified on a live Jellyfin 12.4.0 server: instal
 Requires the .NET SDK 10.
 
 ```bash
-git clone https://github.com/KatoSred/Per-User-Visibility.git
-cd Per-User-Visibility/src/Jellyfin.Plugin.PerUserVisibility
+git clone https://github.com/KatoSred/jellyfin-plugin-per-user-visibility.git
+cd jellyfin-plugin-per-user-visibility/src/Jellyfin.Plugin.PerUserVisibility
 dotnet publish -c Release -o ../../build
 cd ../..
 python3 tools/package.py
